@@ -1,16 +1,17 @@
 ﻿using chcommerce_api.Handler;
+using chcommerce_api.Models;
 
 UserHandler userHandler = new UserHandler();
 SaleHandler saleHandler = new SaleHandler();
 ProductSaleHandler productSaleHandler = new ProductSaleHandler();
 ProductHandler productHandler = new ProductHandler();
 
-var login = userHandler.Login("tcasazza", "SoyTobiasCasazza");
-var allusers = userHandler.GetUsers();
-var oneuser = userHandler.GetUserById(1);
+Usuario login = userHandler.Login("tcasazza", "SoyTobiasCasazza");
+List<Usuario> allusers = userHandler.GetUsers();
+Usuario oneuser = userHandler.GetUserById(1);
 
-var sales = saleHandler.GetSalesById(1);
-var productsales = productSaleHandler.GetProductSales(1);
-var products = productHandler.GetProducts(1);
+List<Venta> sales = saleHandler.GetSalesById(1);
+List<Producto> productsales = productSaleHandler.GetProductSales(1);
+List<Producto> products = productHandler.GetProducts(1);
 
 Console.ReadLine();

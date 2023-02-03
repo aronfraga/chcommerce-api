@@ -1,20 +1,20 @@
-﻿using chcommerce_api.Models;
+﻿using chcommerce_api.Data;
+using chcommerce_api.Models;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace chcommerce_api.Handler {
-	public class ProductSaleHandler {
-
-		public string connectionString = "Server =.\\SQLExpress; Database = SistemaGestion; User ID = aronfraga; Password = 12345678; TrustServerCertificate = True; Trusted_Connection = True; MultipleActiveResultSets = true";
+	public class ProductSaleHandler : DbConnect {
 
 		public List<Producto> GetProductSales(int id) {
 			List<Producto> producto = new List<Producto>();
-			using (SqlConnection connection = new SqlConnection(connectionString)) {
-
-				SqlCommand query = new SqlCommand("SELECT * FROM ProductoVendido PV INNER JOIN Producto P ON PV.IdProducto = P.Id WHERE P.Id=@id", connection);
-				query.Parameters.AddWithValue("@id", id);
+			query = "SELECT * FROM ProductoVendido PV INNER JOIN Producto P ON PV.IdProducto = P.Id WHERE P.Id=@id";
+			try {
+				command.CommandText = query;
+				command.Parameters.AddWithValue("@id", id);
 				connection.Open();
 
-				SqlDataReader reader = query.ExecuteReader();
+				SqlDataReader reader = command.ExecuteReader();
 				if (reader.HasRows) {
 					while (reader.Read()) {
 						Producto ProductoTemporal = new Producto();
@@ -30,6 +30,12 @@ namespace chcommerce_api.Handler {
 					}
 				}
 				return producto;
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				if (connection.State == ConnectionState.Open) {
+					connection.Close();
+				}
 			}
 		}
 

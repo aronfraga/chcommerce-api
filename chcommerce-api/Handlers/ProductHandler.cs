@@ -1,20 +1,20 @@
-﻿using chcommerce_api.Models;
+﻿using chcommerce_api.Data;
+using chcommerce_api.Models;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace chcommerce_api.Handler {
-	public class ProductHandler {
-
-		public string connectionString = "Server =.\\SQLExpress; Database = SistemaGestion; User ID = aronfraga; Password = 12345678; TrustServerCertificate = True; Trusted_Connection = True; MultipleActiveResultSets = true";
+	public class ProductHandler : DbConnect {
 
 		public List<Producto> GetProducts(int id) {
 			List<Producto> producto = new List<Producto>();
-			using (SqlConnection connection = new SqlConnection(connectionString)) {
-
-				SqlCommand query = new SqlCommand("SELECT * FROM Producto WHERE IdUsuario=@id", connection);
-				query.Parameters.AddWithValue("@id", id);
+			query = "SELECT * FROM Producto WHERE IdUsuario=@id";
+			try {
+				command.CommandText = query;
+				command.Parameters.AddWithValue("@id", id);
 				connection.Open();
 
-				SqlDataReader reader = query.ExecuteReader();
+				SqlDataReader reader = command.ExecuteReader();
 				if (reader.HasRows) {
 					while (reader.Read()) {
 						Producto ProductoTemporal = new Producto();
@@ -30,7 +30,13 @@ namespace chcommerce_api.Handler {
 					}
 				}
 				return producto;
-			}
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				if (connection.State == ConnectionState.Open) {
+					connection.Close();
+				}
+			}	
 		}
 
 	}
