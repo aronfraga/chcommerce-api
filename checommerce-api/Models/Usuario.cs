@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace chcommerce_api.Models {
+﻿namespace checommerce_api.Models {
 	public class Usuario {
 
 		public long Id { get; set; }

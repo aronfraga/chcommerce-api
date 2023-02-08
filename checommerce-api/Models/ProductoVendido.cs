@@ -1,4 +1,4 @@
-﻿namespace chcommerce_api.Models {
+﻿namespace checommerce_api.Models {
 	public class ProductoVendido {
 
 		public int Id { get; set; }

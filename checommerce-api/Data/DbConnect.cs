@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 
-namespace chcommerce_api.Data {
+namespace checommerce_api.Data {
 	public class DbConnect {
 
 		protected SqlConnection connection = new SqlConnection();
@@ -17,5 +17,3 @@ namespace chcommerce_api.Data {
 
 	}
 }
-
-
