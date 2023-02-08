@@ -42,27 +42,20 @@ namespace checommerce_api.Repository {
 		public void NewProductSale(List<Producto> producto, int IdUsuario) {
 			query = "INSERT INTO ProductoVendido (Stock, IdProducto, IdVenta) VALUES (@stock, @idproducto, @idventa)";
 			SaleRepository sale = new SaleRepository();
-			sale.NewSale(IdUsuario);
 			try {
-
-				//if (producto.Descripciones == null || producto.Descripciones is not String) throw new Exception("Descripcion es obligatoria");
-				//if (producto.Costo == null) throw new Exception("El costo del producto es obligatorio");
-				//if (producto.PrecioVenta == null) throw new Exception("El precio de venta del producto es obligatorio");
-				//if (producto.Stock == null) throw new Exception("El stock del producto es obligatorio");
-				//if (producto.IdUsuario == null) throw new Exception("El id del usuario del producto es obligatorio");
-				
+				int idVenta = (int)sale.NewSale(IdUsuario);
+				command.CommandText = query;
 				connection.Open();
 
 				foreach (var item in producto) {
-					command.CommandText = query;
-					command.Parameters.Clear();
 					command.Parameters.AddWithValue("@idusuario", IdUsuario);
 					command.Parameters.AddWithValue("@stock", item.Stock);
 					command.Parameters.AddWithValue("@idproducto", item.Id);
-					command.Parameters.AddWithValue("@idventa", IdUsuario);
-					command.ExecuteNonQuery();
-					
+					command.Parameters.AddWithValue("@idventa", idVenta);
+		
 					sale.StockChange(item.Stock, item.Id);
+					command.ExecuteNonQuery();
+					command.Parameters.Clear();
 				}
 
 			} catch (Exception ex) {

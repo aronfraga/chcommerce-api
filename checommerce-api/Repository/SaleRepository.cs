@@ -36,17 +36,24 @@ namespace checommerce_api.Repository {
 			}
 		}
 
-		public void NewSale(int IdUsuario) {
-			query = "INSERT INTO Venta (IdUsuario) VALUES (@idusuario)";
+		public decimal NewSale(int IdUsuario) {
+			query = $"INSERT INTO Venta (IdUsuario) VALUES (@idusuario) SELECT @@IDENTITY AS 'Identity'";
+			decimal IdVenta = 0;
 			try {
 				if (IdUsuario == null) throw new Exception("El id del usuario es obligatorio");
 
 				command.CommandText = query;
 				command.Parameters.AddWithValue("@idusuario", IdUsuario);
-
 				connection.Open();
-				command.ExecuteNonQuery();
 
+				SqlDataReader reader = command.ExecuteReader();
+				if(reader.HasRows) {
+					reader.Read();
+					IdVenta = reader.GetDecimal(0);
+				}
+				command.Parameters.Clear();
+
+				return IdVenta;
 			} catch (Exception ex) {
 				throw ex;
 			} finally {
@@ -59,7 +66,7 @@ namespace checommerce_api.Repository {
 		public void StockChange(int Stock, long IdProducto) {
 			query = "UPDATE Producto SET Stock=Stock-@stock WHERE Id=@id";
 			try {
-
+				command.Parameters.Clear();
 				command.CommandText = query;
 				command.Parameters.AddWithValue("@stock", Stock);
 				command.Parameters.AddWithValue("@id", IdProducto);
