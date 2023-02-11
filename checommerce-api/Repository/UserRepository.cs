@@ -91,13 +91,13 @@ namespace checommerce_api.Repository {
 		}
 		
 
-		public Usuario Login(Login usuario) {
+		public Usuario Login(string nombreUsuario, string contrasena) {
 			Usuario UsuarioTemporal = new Usuario();
 			query = "SELECT * FROM Usuario WHERE NombreUsuario=@user AND Contraseña=@password";
 			try {
 				command.CommandText = query;
-				command.Parameters.AddWithValue("@user", usuario.NombreUsuario);
-				command.Parameters.AddWithValue("@password", usuario.Contrasena);
+				command.Parameters.AddWithValue("@user", nombreUsuario);
+				command.Parameters.AddWithValue("@password", contrasena);
 				connection.Open();
 
 				SqlDataReader reader = command.ExecuteReader();

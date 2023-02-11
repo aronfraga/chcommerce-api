@@ -15,10 +15,10 @@ namespace checommerce_api.Controllers {
 			user.PostUser(usuario);
 			return Ok();
 		}
-		
-		[HttpGet]
-		public IActionResult GetAllUsers([FromBody] Login usuario) {
-			return Ok(user.Login(usuario));
+
+		[HttpGet("{nombreUsuario}/{contrasena}")]
+		public IActionResult GetAllUsers(string nombreUsuario, string contrasena) {
+			return Ok(user.Login(nombreUsuario, contrasena));
 		}
 		
 		[HttpGet("{id}")]
