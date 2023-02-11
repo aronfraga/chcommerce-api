@@ -6,12 +6,11 @@ using System.Data;
 namespace checommerce_api.Repository {
 	public class ProductSaleRepository : DbConnect {
 
-		public List<Producto> GetProductSales(int id) {
+		public List<Producto> GetProductSales() {
 			List<Producto> producto = new List<Producto>();
-			query = "SELECT * FROM ProductoVendido PV INNER JOIN Producto P ON PV.IdProducto = P.Id WHERE P.Id=@id";
+			query = "SELECT * FROM ProductoVendido PV INNER JOIN Producto P ON PV.IdProducto = P.Id";
 			try {
 				command.CommandText = query;
-				command.Parameters.AddWithValue("@id", id);
 				connection.Open();
 
 				SqlDataReader reader = command.ExecuteReader();
@@ -38,12 +37,11 @@ namespace checommerce_api.Repository {
 				}
 			}
 		}
-
-		public void NewProductSale(List<Producto> producto, int IdUsuario) {
+		
+		public void NewProductSale(List<Producto> producto, int IdUsuario, int IdVenta) {
 			query = "INSERT INTO ProductoVendido (Stock, IdProducto, IdVenta) VALUES (@stock, @idproducto, @idventa)";
-			SaleRepository sale = new SaleRepository();
+			ProductRepository product = new ProductRepository();
 			try {
-				int idVenta = (int)sale.NewSale(IdUsuario);
 				command.CommandText = query;
 				connection.Open();
 
@@ -51,13 +49,33 @@ namespace checommerce_api.Repository {
 					command.Parameters.AddWithValue("@idusuario", IdUsuario);
 					command.Parameters.AddWithValue("@stock", item.Stock);
 					command.Parameters.AddWithValue("@idproducto", item.Id);
-					command.Parameters.AddWithValue("@idventa", idVenta);
+					command.Parameters.AddWithValue("@idventa", IdVenta);
 		
-					sale.StockChange(item.Stock, item.Id);
+					product.StockChange(item.Stock, item.Id);
 					command.ExecuteNonQuery();
 					command.Parameters.Clear();
 				}
 
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				if (connection.State == ConnectionState.Open) {
+					connection.Close();
+				}
+			}
+		}
+		
+		public void DeleteProductSale(int IdVenta) {
+			query = "DELETE FROM ProductoVendido WHERE IdVenta=@IdVenta";
+
+			try {
+				if (IdVenta == null) throw new Exception("El id del usuario es obligatorio");
+
+				command.CommandText = query;
+				command.Parameters.AddWithValue("@IdVenta", IdVenta);
+				connection.Open();
+				command.ExecuteNonQuery();
+				command.Parameters.Clear();
 			} catch (Exception ex) {
 				throw ex;
 			} finally {

@@ -96,7 +96,7 @@ namespace checommerce_api.Repository {
 		}
 
 		public void PostUser(Usuario usuario) {
-			query = "INSERT INTO Usuario (Nombre, Apellido, NombreUsuario, Contresana, Mail) VALUES (@nombre, @apellido, @nombreusuario, @contrasena, @mail)";
+			query = "INSERT INTO Usuario (Nombre, Apellido, NombreUsuario, Contraseña, Mail) VALUES (@nombre, @apellido, @nombreusuario, @contrasena, @mail)";
 			try {
 				if (usuario.Nombre == null || usuario.Nombre is not String) throw new Exception("El nombre del usuario es obligatorio");
 				if (usuario.Apellido == null || usuario.Apellido is not String) throw new Exception("El apellido del usuario es obligatorio");
@@ -124,7 +124,7 @@ namespace checommerce_api.Repository {
 		}
 
 		public void PutUser(Usuario usuario, int id) {
-			query = "UPDATE Usuario SET Nombre=@nombre, Apellido=@apellido, NombreUsuario=@nombreusuario, Contresana=@contrasena, Mail=@mail WHERE Id=@id";
+			query = "UPDATE Usuario SET Nombre=@nombre, Apellido=@apellido, NombreUsuario=@nombreusuario, Contraseña=@contrasena, Mail=@mail WHERE Id=@id";
 			try {
 				if (usuario.Nombre == null || usuario.Nombre is not String) throw new Exception("El nombre del usuario es obligatorio");
 				if (usuario.Apellido == null || usuario.Apellido is not String) throw new Exception("El apellido del usuario es obligatorio");
@@ -134,7 +134,7 @@ namespace checommerce_api.Repository {
 
 				command.CommandText = query;
 				command.Parameters.AddWithValue("@nombre", usuario.Nombre);
-				command.Parameters.AddWithValue("@apellido", usuario.Mail);
+				command.Parameters.AddWithValue("@apellido", usuario.Apellido);
 				command.Parameters.AddWithValue("@nombreusuario", usuario.NombreUsuario);
 				command.Parameters.AddWithValue("@contrasena", usuario.Contrasena);
 				command.Parameters.AddWithValue("@mail", usuario.Mail);

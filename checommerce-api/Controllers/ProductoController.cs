@@ -10,19 +10,32 @@ namespace checommerce_api.Controllers {
 
 		ProductRepository product = new ProductRepository();
 
+		[HttpGet]
+		public IActionResult GetAllSales() {
+			return Ok(product.GetProducts());
+		}
+		
+		[HttpGet("{id}")]
+		public IActionResult GetSaleById(int id) {
+			return Ok(product.GetProduct(id));
+		}
+		
 		[HttpPost]
-		public void Crear([FromBody] Producto producto ) {
+		public IActionResult Crear([FromBody] Producto producto ) {
 			product.PostProduct(producto);
+			return Ok();
 		}
 
 		[HttpPut("{id}")]
-		public void Actualizar(int id, [FromBody] Producto producto) {
+		public IActionResult Actualizar(int id, [FromBody] Producto producto) {
 			product.PutProduct(producto, id);
+			return Ok();
 		}
 
 		[HttpDelete("{id}")]
-		public void Eliminar(int id) {
+		public IActionResult Eliminar(int id) {
 			product.DeleteProduct(id);
+			return Ok();
 		}
 
 	}

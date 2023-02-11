@@ -6,12 +6,11 @@ using System.Data;
 namespace checommerce_api.Repository {
 	public class ProductRepository : DbConnect {
 
-		public List<Producto> GetProducts(int id) {
+		public List<Producto> GetProducts() {
 			List<Producto> producto = new List<Producto>();
-			query = "SELECT * FROM Producto WHERE IdUsuario=@id";
+			query = "SELECT * FROM Producto";
 			try {
 				command.CommandText = query;
-				command.Parameters.AddWithValue("@id", id);
 				connection.Open();
 
 				SqlDataReader reader = command.ExecuteReader();
@@ -30,6 +29,37 @@ namespace checommerce_api.Repository {
 					}
 				}
 				return producto;
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				if (connection.State == ConnectionState.Open) {
+					connection.Close();
+				}
+			}
+		}
+		
+		public Producto GetProduct(int id) {
+			query = "SELECT * FROM Producto WHERE Id=@id";
+			try {
+				command.CommandText = query;
+				command.Parameters.AddWithValue("@id", id);
+				connection.Open();
+
+				SqlDataReader reader = command.ExecuteReader();
+				Producto ProductoTemporal = new Producto();
+				if (reader.HasRows) {
+					while (reader.Read()) {
+
+						ProductoTemporal.Id = reader.GetInt64(0);
+						ProductoTemporal.Descripciones = reader.GetString(1);
+						ProductoTemporal.Costo = reader.GetDecimal(2);
+						ProductoTemporal.PrecioVenta = reader.GetDecimal(3);
+						ProductoTemporal.Stock = reader.GetInt32(4);
+						ProductoTemporal.IdUsuario = reader.GetInt64(5);
+						
+					}
+				}
+				return ProductoTemporal;
 			} catch (Exception ex) {
 				throw ex;
 			} finally {
@@ -108,6 +138,28 @@ namespace checommerce_api.Repository {
 			} catch (Exception ex) {
 				throw ex;
 			} finally {
+				if (connection.State == ConnectionState.Open) {
+					connection.Close();
+				}
+			}
+		}
+
+		public void StockChange(int Stock, long IdProducto) {
+			query = "UPDATE Producto SET Stock=Stock-@stock WHERE Id=@id";
+			try {
+				command.Parameters.Clear();
+				command.CommandText = query;
+				command.Parameters.AddWithValue("@stock", Stock);
+				command.Parameters.AddWithValue("@id", IdProducto);
+
+				connection.Open();
+				command.ExecuteNonQuery();
+
+			}
+			catch (Exception ex) {
+				throw ex;
+			}
+			finally {
 				if (connection.State == ConnectionState.Open) {
 					connection.Close();
 				}

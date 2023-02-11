@@ -11,18 +11,30 @@ namespace checommerce_api.Controllers {
 		UserRepository user = new UserRepository();
 
 		[HttpPost]
-		public void Crear([FromBody] Usuario usuario) {
+		public IActionResult Crear([FromBody] Usuario usuario) {
 			user.PostUser(usuario);
+			return Ok();
+		}
+		
+		[HttpGet]
+		public IActionResult GetAllUsers() {
+			return Ok(user.GetUsers());
+		}
+		[HttpGet("{id}")]
+		public IActionResult GetUserById(int id) {
+			return Ok(user.GetUserById(id));
 		}
 
 		[HttpPut("{id}")]
-		public void Actualizar(int id, [FromBody] Usuario usuario) {
+		public IActionResult Actualizar(int id, [FromBody] Usuario usuario) {
 			user.PutUser(usuario, id);
+			return Ok();
 		}
 
 		[HttpDelete("{id}")]
-		public void Eliminar(int id) {
+		public IActionResult Eliminar(int id) {
 			user.DeleteUser(id);
+			return Ok();
 		}
 
 	}

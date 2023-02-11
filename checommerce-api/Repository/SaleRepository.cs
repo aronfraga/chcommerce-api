@@ -35,10 +35,40 @@ namespace checommerce_api.Repository {
 				}
 			}
 		}
+		
+		public List<Venta> GetAllSales() {
+			List<Venta> venta = new List<Venta>();
+			query = "SELECT * FROM Venta";
+			try {
+				command.CommandText = query;
+				connection.Open();
 
-		public decimal NewSale(int IdUsuario) {
-			query = $"INSERT INTO Venta (IdUsuario) VALUES (@idusuario) SELECT @@IDENTITY AS 'Identity'";
+				SqlDataReader reader = command.ExecuteReader();
+				if (reader.HasRows) {
+					while (reader.Read()) {
+						Venta VentaTemporal = new Venta();
+
+						VentaTemporal.Id = reader.GetInt64(0);
+						VentaTemporal.Comentario = reader.GetString(1);
+						VentaTemporal.IdUsuario = reader.GetInt64(2);
+
+						venta.Add(VentaTemporal);
+					}
+				}
+				return venta;
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				if (connection.State == ConnectionState.Open) {
+					connection.Close();
+				}
+			}
+		}
+		
+		public void NewSale(List<Producto> producto, int IdUsuario) {
+			query = $"INSERT INTO Venta (Comentarios, IdUsuario) VALUES (' ', @idusuario) SELECT @@IDENTITY AS 'Identity'";
 			decimal IdVenta = 0;
+			ProductSaleRepository productSale = new ProductSaleRepository();
 			try {
 				if (IdUsuario == null) throw new Exception("El id del usuario es obligatorio");
 
@@ -52,8 +82,8 @@ namespace checommerce_api.Repository {
 					IdVenta = reader.GetDecimal(0);
 				}
 				command.Parameters.Clear();
-
-				return IdVenta;
+				
+				productSale.NewProductSale(producto, IdUsuario, (int)IdVenta);
 			} catch (Exception ex) {
 				throw ex;
 			} finally {
@@ -63,17 +93,16 @@ namespace checommerce_api.Repository {
 			}
 		}
 
-		public void StockChange(int Stock, long IdProducto) {
-			query = "UPDATE Producto SET Stock=Stock-@stock WHERE Id=@id";
+		public void DeleteSale(int id) {
+			query = "DELETE FROM Venta WHERE Id=@id";
+			ProductSaleRepository productSale = new ProductSaleRepository();
 			try {
-				command.Parameters.Clear();
+				if (id == null) throw new Exception("El id del usuario es obligatorio");
+				productSale.DeleteProductSale(id);
 				command.CommandText = query;
-				command.Parameters.AddWithValue("@stock", Stock);
-				command.Parameters.AddWithValue("@id", IdProducto);
-
+				command.Parameters.AddWithValue("@id", id);
 				connection.Open();
 				command.ExecuteNonQuery();
-
 			} catch (Exception ex) {
 				throw ex;
 			} finally {
