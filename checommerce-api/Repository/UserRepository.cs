@@ -2,6 +2,7 @@
 using checommerce_api.Models;
 using System.Data.SqlClient;
 using System.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace checommerce_api.Repository {
 	public class UserRepository : DbConnect {
@@ -65,14 +66,38 @@ namespace checommerce_api.Repository {
 				}
 			}
 		}
+		
+		public string GetNameById(int id) {
+			query = "SELECT Nombre FROM Usuario WHERE Id=@id";
+			string name = String.Empty;
+			try {
+				command.CommandText = query;
+				command.Parameters.AddWithValue("@id", id);
+				connection.Open();
 
-		public Usuario Login(string user, string password) {
+				SqlDataReader reader = command.ExecuteReader();
+				if (reader.HasRows) {
+					reader.Read();
+					name = reader.GetString(0);
+				}
+				return name;
+			} catch (Exception ex) {
+				throw ex;
+			} finally {
+				if (connection.State == ConnectionState.Open) {
+					connection.Close();
+				}
+			}
+		}
+		
+
+		public Usuario Login(Login usuario) {
 			Usuario UsuarioTemporal = new Usuario();
 			query = "SELECT * FROM Usuario WHERE NombreUsuario=@user AND Contraseña=@password";
 			try {
 				command.CommandText = query;
-				command.Parameters.AddWithValue("@user", user);
-				command.Parameters.AddWithValue("@password", password);
+				command.Parameters.AddWithValue("@user", usuario.NombreUsuario);
+				command.Parameters.AddWithValue("@password", usuario.Contrasena);
 				connection.Open();
 
 				SqlDataReader reader = command.ExecuteReader();

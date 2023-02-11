@@ -17,12 +17,13 @@ namespace checommerce_api.Controllers {
 		}
 		
 		[HttpGet]
-		public IActionResult GetAllUsers() {
-			return Ok(user.GetUsers());
+		public IActionResult GetAllUsers([FromBody] Login usuario) {
+			return Ok(user.Login(usuario));
 		}
+		
 		[HttpGet("{id}")]
 		public IActionResult GetUserById(int id) {
-			return Ok(user.GetUserById(id));
+			return Ok(user.GetNameById(id));
 		}
 
 		[HttpPut("{id}")]
